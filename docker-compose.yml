@@ -1,0 +1,99 @@
+version: '2'
+
+services:
+  run:
+    container_name: helloworld-app
+    build: 
+      context: .
+    volumes:
+      - ${HOME}/.m2/repository:/root/.m2/repository
+      - .:/data/app
+    networks:
+      local-helloworld:
+          ipv4_address: 172.170.0.50
+
+  zookeeper:
+    container_name: helloworld-zookeeper
+    image: jplock/zookeeper
+    networks:
+      local-helloworld:
+        ipv4_address: 172.170.0.80
+        aliases:
+          - helloworld-zookeeper
+
+  kafka:
+    container_name: helloworld-kafka
+    image: notuscloud/kafka:0.11.0.2
+    ports:
+      - "9192:9092"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://helloworld-kafka:9092
+      - KAFKA_BROKER_ID=100
+      - KAFKA_LOG_RETENTION_HOURS=24
+      - KAFKA_LOG_RETENTION_BYTES=131072
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_NUM_PARTITIONS=1
+      - KAFKA_MAX_POLL_INTERVAL_MS=600000
+      - KAFKA_INTER_BROKER_PROTOCOL_VERSION=0.11.0
+      - KAFKA_LOG_MESSAGE_FORMAT_VERSION=0.11.0
+    networks:
+      local-helloworld:
+        ipv4_address: 172.170.0.81
+        aliases:
+          - helloworld-kafka
+
+  kafka2:
+    container_name: helloworld-kafka-2
+    image: notuscloud/kafka:0.11.0.2
+    ports:
+      - "9292:9092"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://helloworld-kafka-2:9092
+      - KAFKA_BROKER_ID=102
+      - KAFKA_LOG_RETENTION_HOURS=24
+      - KAFKA_LOG_RETENTION_BYTES=131072
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_NUM_PARTITIONS=1
+      - KAFKA_MAX_POLL_INTERVAL_MS=600000
+      - KAFKA_INTER_BROKER_PROTOCOL_VERSION=0.11.0
+      - KAFKA_LOG_MESSAGE_FORMAT_VERSION=0.11.0
+    networks:
+      local-helloworld:
+        ipv4_address: 172.170.0.82
+        aliases:
+          - helloworld-kafka-2
+
+  kafka3:
+    container_name: helloworld-kafka-3
+    image: notuscloud/kafka:0.11.0.2
+    ports:
+      - "9392:9092"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://helloworld-kafka-3:9092
+      - KAFKA_BROKER_ID=103
+      - KAFKA_LOG_RETENTION_HOURS=24
+      - KAFKA_LOG_RETENTION_BYTES=131072
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_NUM_PARTITIONS=1
+      - KAFKA_MAX_POLL_INTERVAL_MS=600000
+      - KAFKA_INTER_BROKER_PROTOCOL_VERSION=0.11.0
+      - KAFKA_LOG_MESSAGE_FORMAT_VERSION=0.11.0
+    networks:
+      local-helloworld:
+        ipv4_address: 172.170.0.83
+        aliases:
+          - helloworld-kafka-3
+
+networks:
+  local-helloworld:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.170.0.0/16

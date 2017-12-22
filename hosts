@@ -1,0 +1,5 @@
+172.170.0.50	helloworld-app
+172.170.0.80	helloworld-zookeeper
+172.170.0.81	helloworld-kafka
+172.170.0.82	helloworld-kafka-2
+172.170.0.83	helloworld-kafka-3
